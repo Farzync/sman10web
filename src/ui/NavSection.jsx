@@ -37,8 +37,8 @@ const NavSection = () => {
 
     // Simulasi loading data
     const timer = setTimeout(() => {
-      setLoading(false); // Set loading ke false setelah 2 detik
-    }, 500);
+      setLoading(false); // Set loading ke false setelah 1 milidetik
+    }, 1);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -57,15 +57,15 @@ const NavSection = () => {
       href: "#profil",
       subItems: [
         { label: "Struktur Organisasi", href: "/struktur-organisasi" },
-        { label: "Ekstrakulikuler", href: "/ekstrakulikuler" }
+        { label: "Ekstrakulikuler", href: "/ekstrakurikuler" }
       ]
     },
     {
       label: "Galeri",
       href: "#galeri", 
       subItems: [
-        { label: "Foto", href: "#foto" },
-        { label: "Video", href: "#video" }
+        { label: "Foto", href: "/galeri/foto" },
+        { label: "Video", href: "/galeri/video" }
       ]
     },
     {

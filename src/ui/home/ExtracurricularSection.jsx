@@ -1,116 +1,211 @@
-import React, { useEffect, useState } from 'react';
-import apiService from '../../services/apiService'; // Pastikan path ini sesuai dengan struktur folder Anda
-import ExtracurricularSkeleton from '../skeleton/home/ExtracurricularSekeleton'; // Pastikan path untuk Skeleton sesuai
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import apiService from '../../services/apiService';
+import ExtracurricularSkeleton from '../skeleton/home/ExtracurricularSekeleton';
 
 const ExtracurricularSection = () => {
     const [extracurriculars, setExtracurriculars] = useState([]);
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true); // Menambahkan state loading
+    const [loading, setLoading] = useState(true);
+    const scrollContainerRef = useRef(null);
+    const animationFrameRef = useRef(null);
+    const scrollSpeedRef = useRef(1);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setLoading(true); // Mulai loading
-                const data = await apiService.getEkstrakurikuler(); // Mengambil data ekstrakurikuler dari API
-                setExtracurriculars(data.ekstrakurikuler); // Set data ekstrakurikuler
-                setLoading(false); // Selesai loading
+                setLoading(true);
+                const data = await apiService.getEkstrakurikuler();
+                setExtracurriculars(data.ekstrakurikuler);
+                setLoading(false);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'An error occurred');
-                console.error('Error fetching data:', err);
-                setLoading(false); // Set loading selesai meskipun terjadi error
+                setLoading(false);
             }
         };
 
         fetchData();
     }, []);
 
+    // Infinite scroll logic
+    const startInfiniteScroll = useCallback(() => {
+        const scrollContainer = scrollContainerRef.current;
+        if (!scrollContainer) return;
+
+        const scroll = () => {
+            // Scroll speed (adjust as needed)
+            scrollContainer.scrollLeft += scrollSpeedRef.current;
+
+            // Check if we've scrolled to the halfway point of the total scrollable width
+            const halfWidth = scrollContainer.scrollWidth / 2;
+            if (scrollContainer.scrollLeft >= halfWidth) {
+                // Reset scroll position to create infinite effect
+                scrollContainer.scrollLeft = 0;
+            }
+
+            // Continue the animation
+            animationFrameRef.current = requestAnimationFrame(scroll);
+        };
+
+        // Start scrolling
+        animationFrameRef.current = requestAnimationFrame(scroll);
+
+        // Pause/Resume logic
+        const handleMouseEnter = () => {
+            cancelAnimationFrame(animationFrameRef.current);
+            scrollSpeedRef.current = 0;
+        };
+
+        const handleMouseLeave = () => {
+            scrollSpeedRef.current = 1;
+            animationFrameRef.current = requestAnimationFrame(scroll);
+        };
+
+        scrollContainer.addEventListener('mouseenter', handleMouseEnter);
+        scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+
+        return () => {
+            cancelAnimationFrame(animationFrameRef.current);
+            scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
+            scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+        };
+    }, []);
+
+    // Start infinite scroll when extracurriculars are loaded
+    useEffect(() => {
+        if (extracurriculars.length > 0) {
+            startInfiniteScroll();
+        }
+
+        return () => {
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
+        };
+    }, [extracurriculars, startInfiniteScroll]);
+
     if (error) {
         return (
-            <div className="p-5 text-red-600">
+            <div className="p-5 text-red-600 text-center">
                 Error loading data: {error}
             </div>
         );
     }
 
     if (loading) {
-        // Jika sedang loading, tampilkan Skeleton
         return <ExtracurricularSkeleton />;
     }
 
     if (!extracurriculars.length) {
         return (
-            <div className="p-5 text-gray-600">
+            <div className="p-5 text-gray-600 text-center">
                 Tidak ada ekstrakurikuler yang ditemukan.
             </div>
         );
     }
 
+    // Create multiple copies to ensure smooth infinite scroll
+    const infiniteExtracurriculars = [
+        ...extracurriculars, 
+        ...extracurriculars, 
+        ...extracurriculars, 
+        ...extracurriculars
+    ];
+
     return (
-        <section className="p-5 relative py-24 bg-gradient-to-b from-gray-100 to-blue-50">
-            <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-gray-800">Ekstrakurikuler</h2>
-                <div className="h-1 w-20 bg-blue-500 mx-auto mt-2"></div>
-            </div>
-            <div className="text-center mb-8">
-                <p className="px-4 md:px-36 text-gray-600 leading-relaxed">
-                    Ekstrakurikuler dapat membantu peserta didik mendapatkan pengetahuan, 
-                    keterampilan, serta membantu membentuk karakter peserta didik sesuai 
-                    dengan minat dan bakat masing-masing.
-                </p>
-            </div>
-            <div className="relative">
-                <div 
-                    className="flex space-x-6 overflow-x-auto scroll-smooth pb-6 hide-scrollbar px-2 pt-16"
-                    style={{
-                        scrollbarWidth: 'none',
-                        msOverflowStyle: 'none',
-                    }}
-                >
-                    {extracurriculars.map((item, index) => (
-                        <div 
-                            key={item.shortName || index}
-                            className="flex-shrink-0 w-80 h-5/4 bg-white rounded-xl shadow-lg hover:shadow-2xl transform hover:-translate-y-4 transition-all duration-300 mt-8"
-                        >
-                            <div className="relative">
-                                <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
-                                    <div className="w-32 h-32 rounded-full bg-white shadow-lg flex items-center justify-center p-4 border-4 border-blue-100">
-                                        <img 
-                                            src={item.logo} 
-                                            alt={item.shortName} 
-                                            className="w-24 h-24 object-contain"
-                                        />
+        <section className="bg-gradient-to-br from-blue-50 to-blue-100 py-16 px-4">
+            <div className="container mx-auto">
+                {/* Section Header */}
+                <div className="text-center mb-12">
+                    <h2 className="text-4xl font-bold text-blue-900 mb-4">
+                        Ekstrakurikuler
+                    </h2>
+                    <div className="h-1 w-24 bg-blue-500 mx-auto mb-4"></div>
+                    <p className="text-gray-600 max-w-2xl mx-auto">
+                        Mengembangkan potensi, keterampilan, dan karakter peserta didik 
+                        sesuai minat dan bakat masing-masing.
+                    </p>
+                </div>
+
+                {/* Infinite Scrollable Container */}
+                <div className="relative group overflow-hidden">
+                    <div 
+                        ref={scrollContainerRef}
+                        className="scroll-container flex overflow-x-scroll space-x-6 pb-6 
+                        scrollbar-hide scroll-smooth no-scrollbar"
+                        style={{
+                            scrollSnapType: 'x mandatory',
+                            WebkitOverflowScrolling: 'touch',
+                            cursor: 'grab',
+                        }}
+                    >
+                        {infiniteExtracurriculars.map((item, index) => (
+                            <div 
+                                key={`${item.shortName}-${index}`}
+                                className="scroll-snap-align-center flex-shrink-0 w-80 
+                                bg-white rounded-2xl shadow-lg 
+                                transform transition-all duration-300 
+                                hover:-translate-y-2 hover:shadow-xl"
+                            >
+                                <div className="p-6">
+                                    {/* Logo */}
+                                    <div className="flex justify-center mb-6">
+                                        <div className="w-32 h-32 rounded-full 
+                                        bg-blue-50 flex items-center justify-center 
+                                        p-4 shadow-md">
+                                            <img 
+                                                src={item.logo} 
+                                                alt={item.shortName} 
+                                                className="w-24 h-24 object-contain"
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="pt-20 p-6">
-                                    <div className="text-center mb-4">
-                                        <h3 className="text-xl font-bold text-blue-900 mb-1">
+
+                                    {/* Content */}
+                                    <div className="text-center">
+                                        <h3 className="text-2xl font-bold text-blue-900 mb-2">
                                             {item.shortName}
                                         </h3>
-                                        <p className="text-sm text-blue-600">
+                                        <p className="text-blue-600 mb-4">
                                             {item.fullName}
                                         </p>
-                                    </div>
-                                    <div className="bg-blue-50 rounded-lg p-4 mb-4 min-h-[100px]">
-                                        <p className="text-gray-700 text-sm leading-relaxed">
-                                            {item.description}
-                                        </p>
-                                    </div>
-                                    <div className="flex items-center justify-between border-t pt-4">
-                                        <div className="flex flex-col space-y-1">
-                                            <span className="text-xs font-medium text-gray-500">
-                                                Ketua Umum
-                                            </span>
-                                            <span className="text-sm font-semibold text-blue-800">
+
+                                        <div className="bg-blue-50 rounded-lg p-4 mb-4 min-h-[120px]">
+                                            <p className="text-gray-700 text-sm leading-relaxed">
+                                                {item.description}
+                                            </p>
+                                        </div>
+
+                                        <div className="mt-4">
+                                            <span className="text-sm text-gray-500">Ketua Umum</span>
+                                            <p className="text-blue-800 font-semibold">
                                                 {item.chairman}
-                                            </span>
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
+
+            {/* Custom CSS for hiding scrollbar */}
+            <style jsx>{`
+                .scrollbar-hide::-webkit-scrollbar {
+                    display: none;
+                }
+                .scrollbar-hide {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+                .scroll-snap-align-center {
+                    scroll-snap-align: center;
+                }
+                .no-scrollbar {
+                    -ms-overflow-style : none;
+                    scrollbar-width: none;
+                }
+            `}</style>
         </section>
     );
 };
