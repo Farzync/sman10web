@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
-import { Link } from "react-router-dom"; // Ganti dengan Link dari react-router-dom
+import { Link } from "react-router-dom";
 import NavSkeleton from "../ui/skeleton/NavSkeleton"; // Import skeleton
+
+import logoImg from '../media/img/logo-sman10.png';
 
 const NavSection = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -54,8 +56,8 @@ const NavSection = () => {
       label: "Profil",
       href: "#profil",
       subItems: [
-        { label: "Struktur Organisasi", href: "/profile/struktur-organisasi" },
-        { label: "Ekstrakulikuler", href: "/profile/ekstrakulikuler" }
+        { label: "Struktur Organisasi", href: "/struktur-organisasi" },
+        { label: "Ekstrakulikuler", href: "/ekstrakulikuler" }
       ]
     },
     {
@@ -98,15 +100,14 @@ const NavSection = () => {
   return (
     <header
       className={`fixed top-0 z-50 w-full transition-all duration-300 ${
-        isVisible 
-          ? "translate-y-0 shadow-md" 
-          : "-translate-y-full"
+        isVisible ? "translate-y-0 shadow-md" : "-translate-y-full"
       } bg-black text-white`}
     >
       <nav className="container mx-auto flex items-center justify-between px-4 py-3 lg:px-8">
-        {/* Logo */}
-        <Link to="/" className="text-2xl font-bold tracking-wider hover:text-gray-200 transition-colors">
-          SMAN 10
+        {/* Logo and School Name */}
+        <Link to="/" className="flex items-center space-x-3 text-xl font-semibold tracking-wide hover:text-gray-200 transition-all duration-300 ease-in-out">
+          <img src={logoImg} alt="Logo SMAN 10" className="w-12 h-12 object-contain" />
+          <p className="text-lg sm:text-2xl font-bold">SMAN 10 Kota Bekasi</p>
         </Link>
 
         {/* Mobile Menu Toggle */}
@@ -120,37 +121,33 @@ const NavSection = () => {
         {/* Desktop Navigation */}
         <ul className="hidden lg:flex space-x-6 items-center">
           {menuItems.map((item) => (
-            <li 
-              key={item.label} 
-              className="relative group"
-            >
-              <a 
-                href={item.href} 
+            <li key={item.label} className="relative group">
+              <a
+                href={item.href}
                 onClick={(e) => {
                   e.preventDefault();
                   toggleDropdown(item.label);
                 }}
                 className={`dropdown-trigger flex items-center hover:text-gray-200 transition-colors cursor-pointer ${
-                  activeDropdown === item.label ? 'text-gray-200' : ''
+                  activeDropdown === item.label ? "text-gray-200" : ""
                 }`}
+                aria-expanded={activeDropdown === item.label}
               >
                 {item.label}
-                <ChevronDown 
-                  size={16} 
+                <ChevronDown
+                  size={16}
                   className={`ml-1 transition-transform ${
-                    activeDropdown === item.label ? 'rotate-180' : ''
-                  }`} 
+                    activeDropdown === item.label ? "rotate-180" : ""
+                  }`}
                 />
               </a>
               {/* Dropdown */}
               {activeDropdown === item.label && (
-                <div 
-                  className="dropdown-menu absolute top-full left-0 mt-2 min-w-[200px] bg-white text-gray-800 rounded-lg shadow-lg overflow-hidden"
-                >
+                <div className="dropdown-menu absolute top-full left-0 mt-2 min-w-[200px] bg-white text-gray-800 rounded-lg shadow-lg overflow-hidden">
                   <div className="py-2">
                     {item.subItems.map((subItem) => (
-                      <Link 
-                        key={subItem.label} 
+                      <Link
+                        key={subItem.label}
                         to={subItem.href}
                         className="block px-4 py-2 hover:bg-gray-100 hover:text-white-100 transition-colors"
                       >
@@ -170,7 +167,7 @@ const NavSection = () => {
             <ul className="px-4 py-4 space-y-4">
               {menuItems.map((item) => (
                 <li key={item.label} className="dropdown-trigger">
-                  <div 
+                  <div
                     onClick={(e) => {
                       e.preventDefault();
                       toggleDropdown(item.label);
@@ -178,18 +175,18 @@ const NavSection = () => {
                     className="flex justify-between items-center cursor-pointer hover:text-blue-200"
                   >
                     {item.label}
-                    <ChevronDown 
-                      size={20} 
+                    <ChevronDown
+                      size={20}
                       className={`transition-transform ${
-                        activeDropdown === item.label ? 'rotate-180' : ''
-                      }`} 
+                        activeDropdown === item.label ? "rotate-180" : ""
+                      }`}
                     />
                   </div>
                   {activeDropdown === item.label && (
                     <ul className="pl-4 mt-2 space-y-2">
                       {item.subItems.map((subItem) => (
                         <li key={subItem.label}>
-                          <Link 
+                          <Link
                             to={subItem.href}
                             className="block hover:text-blue-200"
                             onClick={() => {

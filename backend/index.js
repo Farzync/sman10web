@@ -48,6 +48,12 @@ app.use('/api', ekstrakurikulerRoutes);
 const countRoutes = require('./routes/countRoutes');
 app.use('/api', countRoutes);
 
+const beritaRoutes = require('./routes/beritaRoutes');
+app.use('/api', beritaRoutes);
+
+const departmentRoutes = require('./routes/departmentRoutes');
+app.use('/api', departmentRoutes);
+
 // Jalankan server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

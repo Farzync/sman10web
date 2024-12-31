@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import apiService from '../services/apiService'; // Pastikan path ini sesuai dengan struktur folder Anda
+import apiService from '../../services/apiService'; // Pastikan path ini sesuai dengan struktur folder Anda
+import VisiMisiSkeleton from '../skeleton/home/VisiMisiSkeleton';
 
 const VisiMisi = () => {
   const [visiMisi, setVisiMisi] = useState(null);
@@ -23,11 +24,7 @@ const VisiMisi = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    ); // Tampilkan loading spinner saat data sedang diambil
+    return <VisiMisiSkeleton />
   }
 
   if (!visiMisi) {
@@ -41,7 +38,10 @@ const VisiMisi = () => {
   return (
     <section id="misi-section" className="bg-gray-100 py-16">
       <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Visi & Misi</h2>
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold text-gray-800">Visi & Misi</h2>
+        <div className="h-1 w-20 bg-blue-500 mx-auto mt-2"></div>
+      </div>
 
         <div className="grid md:grid-cols-1 gap-8">
           {/* Visi Card */}

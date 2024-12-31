@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Users, GraduationCap, Building2 } from 'lucide-react';
-import apiService from '../services/apiService'; // Pastikan path ini sesuai dengan struktur folder Anda
+import BackgroundImg from "../../media/img/background.jpg";
+import apiService from '../../services/apiService'; // Pastikan path ini sesuai dengan struktur folder Anda
+
+import CountingSkeleton from '../skeleton/home/CountingSkeleton';
 
 const Counter = ({ endValue, label, icon }) => {
   const [count, setCount] = useState(0);
@@ -67,7 +70,7 @@ export default function CountingSection() {
   }, []);
 
   if (loading) {
-    return <div className="text-center text-white">Loading...</div>; // Tampilkan loading saat data sedang diambil
+    return <CountingSkeleton /> // Tampilkan Skeleton saat data sedang diambil
   }
 
   if (error) {
@@ -75,12 +78,12 @@ export default function CountingSection() {
   }
 
   return (
-    <section className="relative h-[40vh] overflow-hidden">
+    <section className="relative min-h-[30vh] md:min-h-[40vh] h-auto overflow-hidden px-4 md:px-8 py-12">
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{ 
-          backgroundImage: "url('background.jpg')",
+          backgroundImage: `url(${BackgroundImg})`,
           backgroundAttachment: 'fixed',
           backgroundPosition: 'center 30%',
           backgroundSize: 'cover',
@@ -91,14 +94,10 @@ export default function CountingSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/70" />
 
       {/* Content Container */}
-      <div className="relative h-full overflow-x-auto overflow-y-hidden">
-        <div className="absolute top-1/2 -translate-y-1/2 w-full">
-          <div className="flex justify-center items-center gap-32 px-16">
-            <Counter endValue={counts.students} label="Siswa" icon="students" />
-            <Counter endValue={counts.teachers} label="Guru" icon="teachers" />
-            <Counter endValue={counts.staff} label="Tenaga Kependidikan" icon="staff" />
-          </div>
-        </div>
+      <div className="relative h-full flex flex-col sm:flex-row justify-center items-center gap-8 sm:gap-12 lg:gap-32 px-4 sm:px-8">
+        <Counter endValue={counts.students} label="Siswa" icon="students" />
+        <Counter endValue={counts.teachers} label="Guru" icon="teachers" />
+        <Counter endValue={counts.staff} label="Tenaga Kependidikan" icon="staff" />
       </div>
     </section>
   );

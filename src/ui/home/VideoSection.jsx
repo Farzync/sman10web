@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import Skeleton from "./skeleton/VideoSkeleton"; // Import skeleton
-import Video from "../media/vid/vid.mp4"; // Ganti dengan path video yang sesuai
-import BackgroundImg from "../media/img/background.jpg"; // Ganti dengan path gambar poster yang sesuai
+import Skeleton from "../skeleton/home/VideoSkeleton"; // Import skeleton
+import Video from "../../media/vid/background.mp4"; // Ganti dengan path video yang sesuai
+import BackgroundImg from "../../media/img/background.jpg"; // Ganti dengan path gambar poster yang sesuai
 import { Link } from "react-router-dom"; // Ganti dengan Link dari react-router-dom
-import apiService from "../services/apiService"; // Import apiService
+import apiService from "../../services/apiService"; // Import apiService
 
 const VideoSection = () => {
   const [videoData, setVideoData] = useState(null);
@@ -56,21 +56,31 @@ const VideoSection = () => {
               {videoData.description} {/* Tampilkan deskripsi dari data */}
             </p>
             <div className="flex font-semibold justify-center items-center space-x-4 mt-4">
-              <button
+              <Link
+                to="/berita"
                 className="px-10 py-4 bg-sky-800 text-white font-semibold shadow-lg rounded-full transition-all duration-300 ease-in-out transform hover:bg-indigo-600 hover:scale-110 hover:shadow-xl focus:ring-4 focus:outline-none"
               >
-                <Link to="/info/berita">
-                  Berita Kami
-                </Link>
-              </button>
+                Berita Selengkapnya
+              </Link>
             </div>
           </div>
         </div>
 
         {/* Selengkapnya Button */}
-        <div className="absolute bottom-8 z-20 left-1/2 transform -translate-x-1/2 text-white cursor-pointer text-center" onClick={() => document.getElementById('greetings-section')?.scrollIntoView({ behavior: 'smooth' })}>
+        <div 
+          className="absolute bottom-8 z-20 left-1/2 transform -translate-x-1/2 text-white cursor-pointer text-center" 
+          onClick={() => {
+            const element = document.getElementById('greetings-section');
+            if (element) {
+              window.scrollTo({
+                top: element.offsetTop - 5, // Offset 5px ke atas dari posisi elemen
+                behavior: 'smooth',
+              });
+            }
+          }}
+        >
           <button className="flex flex-col items-center transition-all duration-300 hover:translate-y-1">
-            <span className="text-lg mb-2 cursor-pointer">Explore</span>
+            <span className="text-lg mb-2 cursor-pointer">Selengkapnya</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 animate-bounce"

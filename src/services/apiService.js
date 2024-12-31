@@ -63,6 +63,39 @@ const apiService = {
       throw error; // Melempar error agar bisa ditangani di tempat lain
     }
   },
+
+  // Mengambil semua berita
+  getAllBerita: async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/berita`);
+      return response.data; // Mengembalikan semua data berita
+    } catch (error) {
+      console.error('Error fetching berita:', error);
+      throw error; // Melempar error agar bisa ditangani di tempat lain
+    }
+  },
+
+  // Mengambil berita berdasarkan slug
+  getBeritaBySlug: async (slug) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/berita/${slug}`);
+      return response.data; // Mengembalikan data berita berdasarkan slug
+    } catch (error) {
+      console.error(`Error fetching berita with slug ${slug}:`, error);
+      throw error; // Melempar error agar bisa ditangani di tempat lain
+    }
+  },
+
+  // Mengambil semua departments beserta anggota dan hierarki mereka
+  getAllDepartments: async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/departments`);
+      return response.data; // Mengembalikan data department yang sudah diformat
+    } catch (error) {
+      console.error('Error fetching departments:', error);
+      throw error; // Melempar error agar bisa ditangani di tempat lain
+    }
+  }
 };
 
 export default apiService;

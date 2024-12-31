@@ -1,34 +1,28 @@
-import React, { useEffect, useState, useRef } from 'react';
-import apiService from '../services/apiService'; // Pastikan path ini sesuai dengan struktur folder Anda
+import React, { useEffect, useState } from 'react';
+import apiService from '../../services/apiService'; // Pastikan path ini sesuai dengan struktur folder Anda
+import ExtracurricularSkeleton from '../skeleton/home/ExtracurricularSekeleton'; // Pastikan path untuk Skeleton sesuai
 
 const ExtracurricularSection = () => {
     const [extracurriculars, setExtracurriculars] = useState([]);
     const [error, setError] = useState(null);
-    const containerRef = useRef(null);
+    const [loading, setLoading] = useState(true); // Menambahkan state loading
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setLoading(true); // Mulai loading
                 const data = await apiService.getEkstrakurikuler(); // Mengambil data ekstrakurikuler dari API
                 setExtracurriculars(data.ekstrakurikuler); // Set data ekstrakurikuler
+                setLoading(false); // Selesai loading
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'An error occurred');
                 console.error('Error fetching data:', err);
+                setLoading(false); // Set loading selesai meskipun terjadi error
             }
         };
 
         fetchData();
     }, []);
-
-    const handleScroll = (direction) => {
-        if (containerRef.current) {
-            const scrollAmount = 300;
-            containerRef.current.scrollBy({
-                left: direction === 'left' ? -scrollAmount : scrollAmount,
-                behavior: 'smooth'
-            });
-        }
-    };
 
     if (error) {
         return (
@@ -36,6 +30,11 @@ const ExtracurricularSection = () => {
                 Error loading data: {error}
             </div>
         );
+    }
+
+    if (loading) {
+        // Jika sedang loading, tampilkan Skeleton
+        return <ExtracurricularSkeleton />;
     }
 
     if (!extracurriculars.length) {
@@ -48,9 +47,10 @@ const ExtracurricularSection = () => {
 
     return (
         <section className="p-5 relative py-24 bg-gradient-to-b from-gray-100 to-blue-50">
-            <h2 className="text-3xl font-bold mb-6 text-center text-blue-800">
-                Ekstrakurikuler
-            </h2>
+            <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-gray-800">Ekstrakurikuler</h2>
+                <div className="h-1 w-20 bg-blue-500 mx-auto mt-2"></div>
+            </div>
             <div className="text-center mb-8">
                 <p className="px-4 md:px-36 text-gray-600 leading-relaxed">
                     Ekstrakurikuler dapat membantu peserta didik mendapatkan pengetahuan, 
@@ -60,7 +60,6 @@ const ExtracurricularSection = () => {
             </div>
             <div className="relative">
                 <div 
-                    ref={containerRef}
                     className="flex space-x-6 overflow-x-auto scroll-smooth pb-6 hide-scrollbar px-2 pt-16"
                     style={{
                         scrollbarWidth: 'none',
@@ -111,21 +110,9 @@ const ExtracurricularSection = () => {
                         </div>
                     ))}
                 </div>
-                    <button 
-                        onClick={() => handleScroll('left')} 
-                        className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-full"
-                    >
-                        &lt;
-                    </button>
-                    <button 
-                        onClick={() => handleScroll('right')} 
-                        className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-full"
-                    >
-                        &gt;
-                    </button>
-                </div>
-            </section>
-        );
-    };
+            </div>
+        </section>
+    );
+};
 
 export default ExtracurricularSection;
