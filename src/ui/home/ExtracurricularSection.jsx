@@ -6,6 +6,7 @@ const ExtracurricularSection = () => {
     const [extracurriculars, setExtracurriculars] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [dataFetched, setDataFetched] = useState(false); // State tambahan untuk menandai apakah data telah diambil
     const scrollContainerRef = useRef(null);
     const animationFrameRef = useRef(null);
     const scrollSpeedRef = useRef(1);
@@ -16,40 +17,34 @@ const ExtracurricularSection = () => {
                 setLoading(true);
                 const data = await apiService.getEkstrakurikuler();
                 setExtracurriculars(data.ekstrakurikuler);
-                setLoading(false);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'An error occurred');
+            } finally {
                 setLoading(false);
+                setDataFetched(true); // Tandai bahwa data telah diambil
             }
         };
 
         fetchData();
     }, []);
 
-    // Infinite scroll logic
     const startInfiniteScroll = useCallback(() => {
         const scrollContainer = scrollContainerRef.current;
         if (!scrollContainer) return;
 
         const scroll = () => {
-            // Scroll speed (adjust as needed)
             scrollContainer.scrollLeft += scrollSpeedRef.current;
 
-            // Check if we've scrolled to the halfway point of the total scrollable width
             const halfWidth = scrollContainer.scrollWidth / 2;
             if (scrollContainer.scrollLeft >= halfWidth) {
-                // Reset scroll position to create infinite effect
                 scrollContainer.scrollLeft = 0;
             }
 
-            // Continue the animation
             animationFrameRef.current = requestAnimationFrame(scroll);
         };
 
-        // Start scrolling
         animationFrameRef.current = requestAnimationFrame(scroll);
 
-        // Pause/Resume logic
         const handleMouseEnter = () => {
             cancelAnimationFrame(animationFrameRef.current);
             scrollSpeedRef.current = 0;
@@ -70,7 +65,6 @@ const ExtracurricularSection = () => {
         };
     }, []);
 
-    // Start infinite scroll when extracurriculars are loaded
     useEffect(() => {
         if (extracurriculars.length > 0) {
             startInfiniteScroll();
@@ -95,12 +89,9 @@ const ExtracurricularSection = () => {
         return <ExtracurricularSkeleton />;
     }
 
-    if (!extracurriculars.length) {
-        return (
-            <div className="p-5 text-gray-600 text-center">
-                Tidak ada ekstrakurikuler yang ditemukan.
-            </div>
-        );
+    // Jika data telah diambil tetapi tidak ada, tetap tampilkan skeleton
+    if (dataFetched && !extracurriculars.length) {
+        return <ExtracurricularSkeleton />; // Tampilkan skeleton jika data tidak ada
     }
 
     // Create multiple copies to ensure smooth infinite scroll

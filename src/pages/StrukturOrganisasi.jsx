@@ -162,6 +162,22 @@ const StrukturOrganisasi = () => {
               <div className="mt-4">
                 {renderHierarchy(selectedMember.hierarchy)}
               </div>
+              <div className={`
+                flex items-center space-x-3
+                text-gray-700 
+                bg-gray-100 
+                rounded-lg 
+                p-2 
+                mb-2 
+                shadow-sm 
+                transition-all 
+                duration-300 
+                hover:bg-blue-50 
+                hover:shadow-md 
+                animate-fade-in-down
+                `}>
+                <h2 className="text-l text-left">{selectedMember.profile.description}</h2>
+              </div>
             </div>
           </div>
         )}

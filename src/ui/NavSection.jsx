@@ -72,23 +72,22 @@ const NavSection = () => {
       label: "Info",
       href: "#info",
       subItems: [
-        { label: "Berita", href: "/info/berita" },
-        { label: "Pengumuman", href: "#pengumuman" },
-        { label: "Kontak", href: "#kontak" }
+        { label: "Berita", href: "/berita" },
+        { label: "Kontak", href: "/kontak" }
       ]
     },
     {
       label: "Aplikasi",
       href: "#aplikasi",
       subItems: [
-        { label: "Ujian Online", href: "#ujian" }
+        { label: "Ujian Online", href: "/ujian-cbt" }
       ]
     },
     {
       label: "Tautan",
       href: "#tautan",
       subItems: [
-        { label: "Instagram", href: "#instagram" }
+        { label: "Instagram", href: "http://instagram.com" }
       ]
     }
   ];

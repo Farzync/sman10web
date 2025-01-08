@@ -5,6 +5,7 @@ import VisiMisiSkeleton from '../skeleton/home/VisiMisiSkeleton';
 const VisiMisi = () => {
   const [visiMisi, setVisiMisi] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [dataFetched, setDataFetched] = useState(false); // State tambahan untuk menandai apakah data telah diambil
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,6 +18,7 @@ const VisiMisi = () => {
         console.error('Error fetching visi dan misi data:', error);
       } finally {
         setLoading(false); // Set loading ke false setelah data diambil
+        setDataFetched(true); // Tandai bahwa data telah diambil
       }
     };
 
@@ -24,15 +26,12 @@ const VisiMisi = () => {
   }, []);
 
   if (loading) {
-    return <VisiMisiSkeleton />
+    return <VisiMisiSkeleton />; // Tampilkan skeleton saat loading
   }
 
-  if (!visiMisi) {
-    return (
-      <div className="text-center text-red-500">
-        <h1>Data visi dan misi tidak tersedia.</h1>
-      </div>
-    ); // Tampilkan pesan jika data tidak tersedia
+  // Jika data telah diambil tetapi tidak ada, tetap tampilkan skeleton
+  if (dataFetched && !visiMisi) {
+    return <VisiMisiSkeleton />; // Tampilkan skeleton jika data tidak ada
   }
 
   return (

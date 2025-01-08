@@ -7,34 +7,33 @@ import fotoKepsek from '../../media/img/kepsek.png';
 
 const SambutanKepalaSekolah = () => {
   const [kepalaSekolah, setKepalaSekolah] = useState(null);
-  const [loading, setLoading] = useState(true);
+const [loading, setLoading] = useState(true);
+const [dataFetched, setDataFetched] = useState(false); // State tambahan untuk menandai apakah data telah diambil
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await apiService.getKepalaSekolah(); // Mengambil data kepala sekolah dari API
-        setKepalaSekolah(data); // Set data kepala sekolah
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false); // Set loading ke false setelah data diambil
-      }
-    };
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const data = await apiService.getKepalaSekolah(); // Mengambil data kepala sekolah dari API
+      setKepalaSekolah(data); // Set data kepala sekolah
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false); // Set loading ke false setelah data diambil
+      setDataFetched(true); // Tandai bahwa data telah diambil
+    }
+  };
 
-    fetchData(); // Panggil fungsi fetchData
-  }, []);
+  fetchData(); // Panggil fungsi fetchData
+}, []);
 
-  if (loading) {
-    return <GreetingSkeleton />
-  }
+if (loading) {
+  return <GreetingSkeleton />; // Tampilkan skeleton saat loading
+}
 
-  if (!kepalaSekolah) {
-    return (
-      <div className="bg-gray-100 py-12 px-4 w-full">
-        <h1 className="text-center text-red-500">Data kepala sekolah tidak tersedia.</h1>
-      </div>
-    ); // Tampilkan pesan jika data tidak tersedia
-  }
+// Jika data telah diambil tetapi tidak ada, tetap tampilkan skeleton
+if (dataFetched && !kepalaSekolah) {
+  return <GreetingSkeleton />; // Tampilkan skeleton jika data tidak ada
+}
 
   return (
     <div className="md:col-span-9 bg-white rounded-2xl shadow-lg p-8 h-full" id='greetings-section'>

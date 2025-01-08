@@ -37,6 +37,7 @@ export default function BeritaSection() {
   const [beritaData, setBeritaData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [dataFetched, setDataFetched] = useState(false); // State tambahan untuk menandai apakah data telah diambil
   const containerRef = useRef(null); // Referensi untuk container scroll
 
   useEffect(() => {
@@ -53,6 +54,7 @@ export default function BeritaSection() {
         setError("Gagal memuat berita");
       } finally {
         setIsLoading(false);
+        setDataFetched(true); // Tandai bahwa data telah diambil
       }
     };
 
@@ -60,15 +62,12 @@ export default function BeritaSection() {
   }, []);
 
   if (isLoading) {
-    return <BeritaSkeleton />
+    return <BeritaSkeleton />; // Tampilkan skeleton saat data sedang diambil
   }
 
-  if (error) {
-    return (
-      <div className="py-16 text-center text-red-500">
-        <p>Error: {error}</p>
-      </div>
-    );
+  // Jika data telah diambil tetapi ada error, tetap tampilkan skeleton
+  if (dataFetched && error) {
+    return <BeritaSkeleton />; // Tampilkan skeleton jika ada error
   }
 
   return (

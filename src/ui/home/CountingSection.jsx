@@ -52,6 +52,7 @@ export default function CountingSection() {
   const [counts, setCounts] = useState({ students: 0, teachers: 0, staff: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [dataFetched, setDataFetched] = useState(false); // State tambahan untuk menandai apakah data telah diambil
 
   useEffect(() => {
     const fetchCounts = async () => {
@@ -63,6 +64,7 @@ export default function CountingSection() {
         console.error('Error fetching counts data:', err);
       } finally {
         setLoading(false); // Set loading ke false setelah data diambil
+        setDataFetched(true); // Tandai bahwa data telah diambil
       }
     };
 
@@ -70,11 +72,12 @@ export default function CountingSection() {
   }, []);
 
   if (loading) {
-    return <CountingSkeleton /> // Tampilkan Skeleton saat data sedang diambil
+    return <CountingSkeleton />; // Tampilkan Skeleton saat data sedang diambil
   }
 
-  if (error) {
-    return <div className="text-center text-red-600">Error loading data: {error}</div>; // Tampilkan error jika ada
+  // Jika data telah diambil tetapi ada error, tetap tampilkan skeleton
+  if (dataFetched && error) {
+    return <CountingSkeleton />; // Tampilkan skeleton jika ada error
   }
 
   return (
